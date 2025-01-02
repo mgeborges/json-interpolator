@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "json-interpolator"
+dynamic = ["version"]
+description = 'A utility for validating and rendering templates with placeholders in JSON-like strings.'
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [{ name = "Marcelo Borges", email = "borges.marcelo@gmail.com" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.urls]
+Documentation = "https://github.com/mgeborges/json-interpolator#readme"
+Issues = "https://github.com/mgeborges/json-interpolator/issues"
+Source = "https://github.com/mgeborges/json-interpolator"
+
+[tool.hatch.version]
+path = "src/json_interpolator/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = ["mypy>=1.0.0"]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/json_interpolator tests}"
+
+[tool.coverage.run]
+source_pkgs = ["json_interpolator", "tests"]
+branch = true
+parallel = true
+omit = ["src/json_interpolator/__about__.py"]
+
+[tool.coverage.paths]
+json_interpolator = [
+  "src/json_interpolator",
+  "*/json-interpolator/src/json_interpolator",
+]
+tests = ["tests", "*/json-interpolator/tests"]
+
+[tool.coverage.report]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
