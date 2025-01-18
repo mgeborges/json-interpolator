@@ -4,7 +4,7 @@
 The JSON Interpolator is a Python package for validating and rendering templates with placeholders in JSON-like strings. It ensures placeholders are correctly formatted and substitutes them with provided values.
 
 ## Features
-- **Validation**: Ensures placeholders meet naming conventions and detects duplicates.
+- **Validation**: Ensures placeholders meet naming conventions.
 - **Rendering**: Dynamically replaces placeholders with values from a dictionary.
 - **Object-Oriented Design**: Encapsulated within the `JSONInterpolator` class for easy reuse and extension.
 
