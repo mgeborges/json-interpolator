@@ -83,22 +83,6 @@ pytest
 ## Dependencies
 This project does not require external dependencies beyond the standard library.
 
-## Directory Structure
-```
-json_interpolator/
-├── json_interpolator/
-│   ├── __about__.py
-│   ├── __init__.py
-│   ├── interpolator.py
-├── tests/
-│   ├── __init__.py
-│   ├── test_interpolator.py
-├── README.md
-├── LICENSE
-├── pyproject.toml
-├── setup.cfg
-```
-
 ## License
 MIT License
 
