@@ -23,19 +23,46 @@ Clone the repository and ensure you have Python installed.
 
 ## Usage
 ### Example
-```python
-from json_interpolator.interpolator import JSONInterpolator
 
-template = '{"key": "<<placeholder_name>>"}'
-params = {"placeholder_name": "value"}
+```python
+from json_interpolator import JSONInterpolator
+
+template = """
+    {
+        "name": <<name>>,
+        "age": <<age>>,
+        "roles": <<roles>>,
+        "contact_info": <<contact_info>>,
+        "is_active": <<is_active>>
+    }
+"""
+params = {
+    "name": "Alice",
+    "age": 30,
+    "roles": ["admin", "support"],
+    "contact_info": {"email": "alice@company.com", "phone": "(555) 555-5555"},
+    "is_active": True
+}
 
 result = JSONInterpolator.render_template(params, template)
-print(result)  # Outputs: {"key": "value"}
+print(result)
+# Outputs:
+# {
+#     "name": "Alice",
+#     "age": 30,
+#     "roles": ["admin", "support"],
+#     "contact_info": {"email": "alice@company.com", "phone": "(555) 555-5555"},
+#     "is_active": true
+# }
 ```
+Please note that there is no need to wrap string placeholders with quotes inside templates. Doing so will lead to an invalid JSON.
 
 ## Error Handling
-- Raises `ValueError` for duplicate placeholders.
-- Raises `ValueError` for placeholders starting with a digit or containing only underscores.
+Raises:
+- `ValueError` if
+    - invalid placeholders are found. Placeholder names are expected to follow the Python variables naming standards.
+    - an invalid JSON is generated because of bad template formatting.
+- `TypeError` if the template is not a string or if the parameters are not provided in a dictionary.
 
 ## Testing
 The package includes a test suite in the `tests/` directory. To run tests:
@@ -60,6 +87,7 @@ This project does not require external dependencies beyond the standard library.
 ```
 json_interpolator/
 ├── json_interpolator/
+│   ├── __about__.py
 │   ├── __init__.py
 │   ├── interpolator.py
 ├── tests/

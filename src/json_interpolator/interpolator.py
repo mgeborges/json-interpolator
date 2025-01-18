@@ -1,3 +1,4 @@
+import json
 import re
 
 
@@ -6,7 +7,7 @@ class JSONInterpolator:
     pattern = re.compile(PLACEHOLDER_REGEX)
 
     @classmethod
-    def validate_template(cls, template):
+    def validate_template(cls, template: str) -> None:
         """
         Validates the template to ensure all placeholders are correctly formatted
         and that there are no duplicates.
@@ -15,11 +16,11 @@ class JSONInterpolator:
             template (str): The template string to validate.
 
         Raises:
-            ValueError: If duplicate or invalid placeholders are found.
+            ValueError: If invalid placeholders are found.
+            TypeError: If the template is not a string.
         """
-        placeholders = cls.pattern.findall(template)
-        if len(set(placeholders)) != len(placeholders):
-            raise ValueError("Duplicate placeholders found in the JSON file.")
+        if not isinstance(template, str):
+            raise TypeError("Template must be string.")
 
         for mo in cls.pattern.finditer(template):
             if set(mo["tv"]) == set("_"):
@@ -28,7 +29,22 @@ class JSONInterpolator:
                 raise ValueError(f"Placeholder {mo['tv']} cannot start with a digit.")
 
     @classmethod
-    def render_template(cls, params, template):
+    def validate_parameters(cls, params: dict) -> None:
+        """
+        Validates the parameters dictionary to ensure all placeholders are present
+        and have valid values.
+
+        Args:
+            params (dict): A dictionary containing placeholder-value pairs.
+
+        Raises:
+            TypeError: If the parameters are not a dictionary
+        """
+        if not isinstance(params, dict):
+            raise TypeError("Parameters must be a dictionary.")
+
+    @classmethod
+    def render_template(cls, params: dict, template: str) -> str:
         """
         Renders a template by replacing placeholders with corresponding values.
 
@@ -38,11 +54,25 @@ class JSONInterpolator:
 
         Returns:
             str: The interpolated template with placeholders replaced by values.
+
+        Raises:
+            ValueError: If rendered JSON is invalid.
         """
         cls.validate_template(template)
+        cls.validate_parameters(params)
 
         for mo in cls.pattern.finditer(template):
-            template = cls.pattern.sub("%%(%s)s" % mo["tv"], template, 1)
+            if mo["tv"] not in params:
+                raise KeyError(f"Parameter {mo['tv']} not found in the parameters.")
 
-        interpolated_string = (template % params).replace("'", '"')
+        # Iterate over the template placeholders and replace them with corresponding values
+        interpolated_string = template
+        for match in cls.pattern.findall(interpolated_string):
+            interpolated_string = interpolated_string.replace(match[0], json.dumps(params[match[1]]))
+
+        # Ensure the result is a valid JSON string
+        try:
+            json.loads(interpolated_string)
+        except json.decoder.JSONDecodeError:
+            raise ValueError("The rendered template is not valid JSON.")
         return interpolated_string
